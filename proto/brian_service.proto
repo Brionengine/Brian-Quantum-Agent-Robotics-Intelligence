@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package brian.service;
+
+import "brian_msgs.proto";
+
+option java_package = "com.brionquantum.brian.service";
+
+// Brain-to-Robot command service
+service BrianCommandService {
+    // Send joint commands to robot (brain -> robot)
+    rpc SendJointCommand(brian.msgs.JointCommand) returns (brian.msgs.TaskStatus);
+
+    // Send high-level task command (brain -> robot)
+    rpc SendTaskCommand(brian.msgs.TaskCommand) returns (brian.msgs.TaskStatus);
+
+    // Emergency stop (bidirectional)
+    rpc SendEmergencyStop(brian.msgs.EmergencyStop) returns (brian.msgs.SafetyStatus);
+
+    // Streaming: continuous joint commands
+    rpc StreamJointCommands(stream brian.msgs.JointCommand) returns (stream brian.msgs.JointStates);
+}
+
+// Robot-to-Brain sensor service
+service BrianSensorService {
+    // Stream sensor data from robot to brain
+    rpc StreamSensors(stream brian.msgs.SensorBundle) returns (stream brian.msgs.Heartbeat);
+
+    // Get current joint states
+    rpc GetJointStates(brian.msgs.Heartbeat) returns (brian.msgs.JointStates);
+
+    // Get current world state
+    rpc GetWorldState(brian.msgs.Heartbeat) returns (brian.msgs.WorldState);
+}
+
+// Control and monitoring service
+service BrianControlService {
+    // Heartbeat exchange
+    rpc ExchangeHeartbeat(brian.msgs.Heartbeat) returns (brian.msgs.Heartbeat);
+
+    // Get safety status
+    rpc GetSafetyStatus(brian.msgs.Heartbeat) returns (brian.msgs.SafetyStatus);
+
+    // Get brain status (consciousness, goals, etc.)
+    rpc GetBrainStatus(brian.msgs.Heartbeat) returns (brian.msgs.BrainStatus);
+
+    // Update configuration
+    rpc UpdateConfig(brian.msgs.ConfigUpdate) returns (brian.msgs.TaskStatus);
+
+    // Get task status
+    rpc GetTaskStatus(brian.msgs.Parameter) returns (brian.msgs.TaskStatus);
+}

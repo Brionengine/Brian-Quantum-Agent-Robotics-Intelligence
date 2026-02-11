@@ -1,0 +1,71 @@
+# Brian-QARI Docker Compose
+# Brain services (cloud-side) deployment
+
+version: "3.9"
+
+services:
+  # === Brian Brain (Cognitive Core) ===
+  brian-brain:
+    build:
+      context: .
+      dockerfile: Dockerfile.brain
+    container_name: brian-brain
+    ports:
+      - "50051:50051"   # gRPC Command Channel
+      - "50052:50052"   # WebRTC Sensor Stream
+      - "50053:50053"   # TCP Control Channel
+      - "8080:8080"     # Dashboard/API
+    volumes:
+      - brian-data:/app/data
+      - brian-models:/app/models
+      - ./config:/app/config:ro
+    environment:
+      - BRIAN_CONFIG=/app/config/brian_default.yaml
+      - BRIAN_LOG_LEVEL=INFO
+      - BRIAN_COMPUTE_MODE=local
+      # GPU support (uncomment for NVIDIA)
+      # - NVIDIA_VISIBLE_DEVICES=all
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+    restart: unless-stopped
+    depends_on:
+      - redis
+
+  # === Redis (State Cache & Message Bus) ===
+  redis:
+    image: redis:7-alpine
+    container_name: brian-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+
+  # === Operator Dashboard ===
+  brian-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.brain
+    container_name: brian-dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      - BRIAN_MODE=dashboard
+      - BRIAN_BRAIN_URL=http://brian-brain:8080
+    depends_on:
+      - brian-brain
+    restart: unless-stopped
+
+volumes:
+  brian-data:
+    driver: local
+  brian-models:
+    driver: local
+  redis-data:
+    driver: local
