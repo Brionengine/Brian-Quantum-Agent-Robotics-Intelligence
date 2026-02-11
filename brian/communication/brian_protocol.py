@@ -25,7 +25,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-BRIAN_MAGIC = b'\xBR'  # 2 bytes
+BRIAN_MAGIC = b'BR'  # 2 bytes magic header
 BRIAN_VERSION = 1
 MAX_PAYLOAD_SIZE = 10 * 1024 * 1024  # 10 MB max payload
 
