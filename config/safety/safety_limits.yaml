@@ -1,0 +1,42 @@
+# Safety Limits Configuration
+# Based on ISO 10218 / ISO/TS 15066 for collaborative robots
+
+safety:
+  # Cartesian space limits
+  max_cartesian_velocity: 1.5       # m/s (ISO/TS 15066: 1.5 m/s max for collaborative)
+  max_cartesian_acceleration: 5.0   # m/s^2
+  max_angular_velocity: 3.14        # rad/s
+
+  # Contact force limits (ISO/TS 15066 Table A.2)
+  max_contact_force: 150.0          # N transient
+  max_quasi_static_force: 65.0      # N quasi-static
+  max_contact_pressure: 2.0         # N/cm^2
+
+  # Human proximity
+  min_human_distance: 0.5           # meters (minimum safe distance)
+  speed_reduction_distance: 1.5     # meters (begin slowing)
+  emergency_stop_distance: 0.2      # meters (immediate stop)
+
+  # Communication
+  heartbeat_timeout_ms: 200.0       # Watchdog timeout
+  max_command_age_ms: 500.0         # Reject stale commands
+  connection_lost_safe_stop_ms: 2000  # Time before safe-pose if connection lost
+  connection_lost_shutdown_ms: 30000  # Time before full shutdown
+
+  # Workspace bounds (meters)
+  workspace_bounds:
+    min: [-5.0, -5.0, 0.0]
+    max: [5.0, 5.0, 3.0]
+
+  # No-go zones (list of spheres)
+  no_go_zones: []
+  # Example:
+  # - center: [2.0, 0.0, 1.0]
+  #   radius: 0.5
+  #   description: "Fragile equipment"
+
+  # Ethical constraints
+  ethical:
+    harm_threshold: 0.1             # Maximum acceptable harm probability
+    force_proportionality: true     # Require force proportional to task
+    human_override_required: false  # Require human confirmation for high-risk

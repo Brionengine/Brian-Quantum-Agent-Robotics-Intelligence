@@ -1,0 +1,76 @@
+# Simulation Platform Configuration
+# Used for development and testing without real hardware
+
+platform:
+  name: "Brian Simulation Humanoid"
+  type: "simulation"
+  simulator: "gazebo"  # gazebo, isaac_sim, mujoco
+
+robot:
+  num_joints: 32
+  mass_kg: 75.0
+  height_m: 1.75
+  max_payload_kg: 15.0
+  control_frequency_hz: 1000.0
+  dof_arms: 7        # per arm
+  dof_legs: 6        # per leg
+  dof_hands: 5       # per hand
+  dof_head: 3        # pan, tilt, roll
+  has_bipedal_locomotion: true
+
+  joints:
+    # Right Arm (joints 0-6)
+    - {id: 0, name: "r_shoulder_pitch", type: "revolute", pos_min: -3.14, pos_max: 3.14, vel_max: 3.0, torque_max: 80.0}
+    - {id: 1, name: "r_shoulder_roll", type: "revolute", pos_min: -1.57, pos_max: 1.57, vel_max: 3.0, torque_max: 80.0}
+    - {id: 2, name: "r_shoulder_yaw", type: "revolute", pos_min: -3.14, pos_max: 3.14, vel_max: 3.0, torque_max: 60.0}
+    - {id: 3, name: "r_elbow_pitch", type: "revolute", pos_min: 0.0, pos_max: 2.36, vel_max: 3.0, torque_max: 60.0}
+    - {id: 4, name: "r_wrist_roll", type: "revolute", pos_min: -3.14, pos_max: 3.14, vel_max: 5.0, torque_max: 20.0}
+    - {id: 5, name: "r_wrist_pitch", type: "revolute", pos_min: -1.57, pos_max: 1.57, vel_max: 5.0, torque_max: 20.0}
+    - {id: 6, name: "r_wrist_yaw", type: "revolute", pos_min: -1.57, pos_max: 1.57, vel_max: 5.0, torque_max: 20.0}
+
+    # Left Arm (joints 7-13)
+    - {id: 7, name: "l_shoulder_pitch", type: "revolute", pos_min: -3.14, pos_max: 3.14, vel_max: 3.0, torque_max: 80.0}
+    - {id: 8, name: "l_shoulder_roll", type: "revolute", pos_min: -1.57, pos_max: 1.57, vel_max: 3.0, torque_max: 80.0}
+    - {id: 9, name: "l_shoulder_yaw", type: "revolute", pos_min: -3.14, pos_max: 3.14, vel_max: 3.0, torque_max: 60.0}
+    - {id: 10, name: "l_elbow_pitch", type: "revolute", pos_min: 0.0, pos_max: 2.36, vel_max: 3.0, torque_max: 60.0}
+    - {id: 11, name: "l_wrist_roll", type: "revolute", pos_min: -3.14, pos_max: 3.14, vel_max: 5.0, torque_max: 20.0}
+    - {id: 12, name: "l_wrist_pitch", type: "revolute", pos_min: -1.57, pos_max: 1.57, vel_max: 5.0, torque_max: 20.0}
+    - {id: 13, name: "l_wrist_yaw", type: "revolute", pos_min: -1.57, pos_max: 1.57, vel_max: 5.0, torque_max: 20.0}
+
+    # Head (joints 14-16)
+    - {id: 14, name: "head_pan", type: "revolute", pos_min: -2.0, pos_max: 2.0, vel_max: 3.0, torque_max: 10.0}
+    - {id: 15, name: "head_tilt", type: "revolute", pos_min: -0.7, pos_max: 0.7, vel_max: 3.0, torque_max: 10.0}
+    - {id: 16, name: "head_roll", type: "revolute", pos_min: -0.5, pos_max: 0.5, vel_max: 3.0, torque_max: 5.0}
+
+    # Right Leg (joints 17-22)
+    - {id: 17, name: "r_hip_pitch", type: "revolute", pos_min: -1.57, pos_max: 1.57, vel_max: 3.0, torque_max: 150.0}
+    - {id: 18, name: "r_hip_roll", type: "revolute", pos_min: -0.52, pos_max: 0.52, vel_max: 3.0, torque_max: 150.0}
+    - {id: 19, name: "r_hip_yaw", type: "revolute", pos_min: -1.0, pos_max: 1.0, vel_max: 3.0, torque_max: 100.0}
+    - {id: 20, name: "r_knee_pitch", type: "revolute", pos_min: 0.0, pos_max: 2.36, vel_max: 3.0, torque_max: 150.0}
+    - {id: 21, name: "r_ankle_pitch", type: "revolute", pos_min: -0.87, pos_max: 0.87, vel_max: 3.0, torque_max: 80.0}
+    - {id: 22, name: "r_ankle_roll", type: "revolute", pos_min: -0.35, pos_max: 0.35, vel_max: 3.0, torque_max: 40.0}
+
+    # Left Leg (joints 23-28)
+    - {id: 23, name: "l_hip_pitch", type: "revolute", pos_min: -1.57, pos_max: 1.57, vel_max: 3.0, torque_max: 150.0}
+    - {id: 24, name: "l_hip_roll", type: "revolute", pos_min: -0.52, pos_max: 0.52, vel_max: 3.0, torque_max: 150.0}
+    - {id: 25, name: "l_hip_yaw", type: "revolute", pos_min: -1.0, pos_max: 1.0, vel_max: 3.0, torque_max: 100.0}
+    - {id: 26, name: "l_knee_pitch", type: "revolute", pos_min: 0.0, pos_max: 2.36, vel_max: 3.0, torque_max: 150.0}
+    - {id: 27, name: "l_ankle_pitch", type: "revolute", pos_min: -0.87, pos_max: 0.87, vel_max: 3.0, torque_max: 80.0}
+    - {id: 28, name: "l_ankle_roll", type: "revolute", pos_min: -0.35, pos_max: 0.35, vel_max: 3.0, torque_max: 40.0}
+
+    # Grippers (joints 29-30)
+    - {id: 29, name: "r_gripper", type: "prismatic", pos_min: 0.0, pos_max: 0.08, vel_max: 0.1, torque_max: 40.0}
+    - {id: 30, name: "l_gripper", type: "prismatic", pos_min: 0.0, pos_max: 0.08, vel_max: 0.1, torque_max: 40.0}
+
+    # Torso (joint 31)
+    - {id: 31, name: "torso_yaw", type: "revolute", pos_min: -1.57, pos_max: 1.57, vel_max: 2.0, torque_max: 100.0}
+
+  sensors:
+    - {type: "rgb_camera", id: "head_cam", resolution: [640, 480], fps: 30}
+    - {type: "depth_camera", id: "head_depth", resolution: [640, 480], fps: 30}
+    - {type: "imu", id: "torso_imu", rate_hz: 200}
+    - {type: "force_torque", id: "r_wrist_ft", rate_hz: 100}
+    - {type: "force_torque", id: "l_wrist_ft", rate_hz: 100}
+    - {type: "force_torque", id: "r_ankle_ft", rate_hz: 100}
+    - {type: "force_torque", id: "l_ankle_ft", rate_hz: 100}
+    - {type: "microphone", id: "head_mic", sample_rate: 16000}

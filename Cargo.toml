@@ -1,0 +1,10 @@
+[workspace]
+members = ["brian_rs"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Brion Quantum <contact@brionquantum.com>"]
+license = "Proprietary"
+description = "Brian-QARI Rust performance layer for real-time robotics"

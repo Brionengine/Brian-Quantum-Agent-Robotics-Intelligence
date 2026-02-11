@@ -1,0 +1,47 @@
+# Brian-QARI Brain Container
+# Runs the cognitive core, perception pipeline, and orchestration
+# Local-first: no cloud dependencies, runs on local GPU/CPU
+
+FROM python:3.13-slim AS base
+
+WORKDIR /app
+
+# System dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    git \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Rust for brian_rs
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+# Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Build Rust components
+COPY Cargo.toml .
+COPY brian_rs/ brian_rs/
+RUN cd brian_rs && cargo build --release
+
+# Copy Python source
+COPY brian/ brian/
+COPY proto/ proto/
+COPY config/ config/
+
+# Compile Protocol Buffers
+RUN python -m grpc_tools.protoc \
+    --proto_path=proto \
+    --python_out=brian/communication/messages \
+    --grpc_python_out=brian/communication/messages \
+    proto/brian_msgs.proto proto/brian_service.proto || true
+
+EXPOSE 50051 50052 50053 8080
+
+ENV PYTHONPATH=/app
+ENV BRIAN_CONFIG=/app/config/brian_default.yaml
+
+CMD ["python", "-m", "brian.orchestrator.brian_orchestrator"]

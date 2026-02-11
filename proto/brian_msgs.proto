@@ -1,0 +1,235 @@
+syntax = "proto3";
+
+package brian.msgs;
+
+option java_package = "com.brionquantum.brian.msgs";
+
+// === Core Types ===
+
+enum ControlMode {
+    POSITION = 0;
+    VELOCITY = 1;
+    TORQUE = 2;
+    IMPEDANCE = 3;
+}
+
+enum TaskType {
+    NAVIGATE = 0;
+    REACH = 1;
+    GRASP = 2;
+    PLACE = 3;
+    SPEAK = 4;
+    GESTURE = 5;
+    LOOK = 6;
+    WAIT = 7;
+    GENERIC = 8;
+}
+
+enum SafetyLevel {
+    NOMINAL = 0;
+    CAUTION = 1;
+    WARNING = 2;
+    CRITICAL = 3;
+    EMERGENCY = 4;
+}
+
+// === Joint Messages ===
+
+message JointTarget {
+    uint32 joint_id = 1;
+    float position = 2;       // radians
+    float velocity = 3;       // rad/s
+    float torque = 4;         // Nm
+    float stiffness = 5;      // For impedance control
+    float damping = 6;
+}
+
+message JointCommand {
+    uint64 timestamp_ns = 1;
+    repeated JointTarget targets = 2;
+    ControlMode mode = 3;
+    float urgency = 4;        // 0.0=normal, 1.0=immediate
+}
+
+message JointState {
+    uint32 joint_id = 1;
+    float position = 2;
+    float velocity = 3;
+    float torque = 4;
+    float temperature = 5;
+}
+
+message JointStates {
+    uint64 timestamp_ns = 1;
+    repeated JointState states = 2;
+}
+
+// === Sensor Messages ===
+
+message IMUData {
+    float accel_x = 1;
+    float accel_y = 2;
+    float accel_z = 3;
+    float gyro_x = 4;
+    float gyro_y = 5;
+    float gyro_z = 6;
+    float mag_x = 7;
+    float mag_y = 8;
+    float mag_z = 9;
+}
+
+message ForceReading {
+    uint32 sensor_id = 1;
+    float force_x = 2;
+    float force_y = 3;
+    float force_z = 4;
+    float torque_x = 5;
+    float torque_y = 6;
+    float torque_z = 7;
+}
+
+message BatteryStatus {
+    float percent = 1;
+    float voltage = 2;
+    float current = 3;
+    float temperature = 4;
+}
+
+message TemperatureMap {
+    map<uint32, float> temperatures = 1; // joint_id -> celsius
+}
+
+message SensorBundle {
+    uint64 timestamp_ns = 1;
+    JointStates joint_states = 2;
+    IMUData imu = 3;
+    repeated ForceReading forces = 4;
+    bytes compressed_image = 5;     // H.265 encoded frame
+    bytes compressed_depth = 6;     // Compressed depth map
+    bytes compressed_audio = 7;     // Opus encoded audio
+    BatteryStatus battery = 8;
+    TemperatureMap temperatures = 9;
+}
+
+// === World State ===
+
+message Vector3 {
+    float x = 1;
+    float y = 2;
+    float z = 3;
+}
+
+message Quaternion {
+    float w = 1;
+    float x = 2;
+    float y = 3;
+    float z = 4;
+}
+
+message Pose {
+    Vector3 position = 1;
+    Quaternion orientation = 2;
+}
+
+message DetectedObject {
+    string object_id = 1;
+    string class_name = 2;
+    float confidence = 3;
+    Pose pose = 4;
+    Vector3 dimensions = 5;     // bounding box
+}
+
+message DetectedPerson {
+    string person_id = 1;
+    Pose pose = 2;
+    float distance = 3;
+    string emotion = 4;
+    float confidence = 5;
+}
+
+message WorldState {
+    uint64 timestamp_ns = 1;
+    Pose robot_pose = 2;
+    JointStates joint_states = 3;
+    repeated DetectedObject objects = 4;
+    repeated DetectedPerson people = 5;
+    repeated ForceReading forces = 6;
+    bytes occupancy_grid = 7;   // Serialized 3D grid
+    float perception_confidence = 8;
+}
+
+// === Task Messages ===
+
+message Parameter {
+    string key = 1;
+    string value = 2;
+}
+
+message TaskCommand {
+    string task_id = 1;
+    string description = 2;
+    TaskType type = 3;
+    repeated Parameter params = 4;
+    float priority = 5;
+    uint64 deadline_ns = 6;
+}
+
+message TaskStatus {
+    string task_id = 1;
+    string status = 2;          // pending, active, completed, failed
+    float progress = 3;         // 0.0-1.0
+    string message = 4;
+}
+
+// === Safety Messages ===
+
+message EmergencyStop {
+    uint64 timestamp_ns = 1;
+    string source = 2;
+    string reason = 3;
+}
+
+message SafetyStatus {
+    uint64 timestamp_ns = 1;
+    SafetyLevel level = 2;
+    bool emergency_stop_active = 3;
+    float speed_reduction_factor = 4;
+    map<uint32, string> zone_statuses = 5;
+    repeated SafetyViolation violations = 6;
+}
+
+message SafetyViolation {
+    uint32 zone = 1;
+    SafetyLevel severity = 2;
+    string description = 3;
+    string action_taken = 4;
+}
+
+// === Control Messages ===
+
+message Heartbeat {
+    uint64 timestamp_ns = 1;
+    string source_id = 2;
+    float cpu_usage = 3;
+    float memory_usage = 4;
+    float latency_ms = 5;
+}
+
+message ConfigUpdate {
+    string key = 1;
+    string value = 2;
+}
+
+// === Brain Status ===
+
+message BrainStatus {
+    float consciousness_level = 1;
+    float autonomy_level = 2;
+    float quantum_resonance = 3;
+    uint32 active_goals = 4;
+    uint32 total_actions = 5;
+    float success_rate = 6;
+    float memory_usage = 7;
+    string current_plan_id = 8;
+    map<string, float> dimensions = 9;
+}

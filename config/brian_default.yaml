@@ -1,0 +1,71 @@
+# Brian-QARI Default Configuration
+# Brion Quantum - Quantum AI & Intelligence Company
+
+brian:
+  version: "0.1.0"
+  instance_name: "brian-primary"
+
+  # Cognitive Core
+  core:
+    embedding_dim: 2048
+    memory_capacity: 1000
+    experience_buffer_capacity: 10000
+    consciousness_update_rate: 0.01
+    autonomy_growth_rate: 0.001
+
+  # Quantum Computing (local-first, no cloud required)
+  quantum:
+    preferred_backend: "qiskit_aer_cpu"  # Local CPU simulator
+    max_qubits: 30
+    default_shots: 1000
+    use_gpu: false
+    gpu_type: "nvidia"  # nvidia or amd
+    enable_deepspeed: false
+
+  # Communication
+  communication:
+    command_channel_port: 50051       # gRPC
+    sensor_stream_port: 50052         # WebRTC
+    control_channel_port: 50053       # TCP
+    heartbeat_interval_ms: 100
+    max_command_age_ms: 500
+    tls_enabled: true
+    hmac_key: "brian-qari-default-key"  # Override in production
+
+  # Safety (ISO 10218 / ISO/TS 15066)
+  safety:
+    max_cartesian_velocity: 1.5       # m/s
+    max_cartesian_acceleration: 5.0   # m/s^2
+    max_contact_force: 150.0          # N
+    min_human_distance: 0.5           # meters
+    speed_reduction_distance: 1.5     # meters
+    emergency_stop_distance: 0.2      # meters
+    heartbeat_timeout_ms: 200.0
+    ethical_harm_threshold: 0.1
+
+  # Compute Resources
+  compute:
+    # Local hardware (default - no cloud needed)
+    mode: "local"  # local, cloud, hybrid
+    local:
+      use_gpu: false
+      gpu_device: 0
+      num_workers: 4
+      deepspeed_enabled: false
+
+    # Cloud/TPU (optional - for Brion Quantum infrastructure)
+    cloud:
+      enabled: false
+      tpu_cluster:
+        perception: "v5e-64-us-central1-a"
+        cognition: "v6e-64-europe-west4-a"
+        training: "v5e-64-europe-west4-b"
+        failover: "v6e-64-us-east1-d"
+        quantum_sim: "v4-32-us-central2-b"
+
+  # Logging
+  logging:
+    level: "INFO"
+    file: "brian.log"
+    console: true
+    max_file_size_mb: 100
